@@ -1,14 +1,19 @@
 package com.springwater.easybot.impl;
+
+import com.google.gson.JsonObject;
 import com.springwater.easybot.bridge.BridgeBehavior;
 import com.springwater.easybot.bridge.ClientProfile;
 import com.springwater.easybot.bridge.message.Segment;
 import com.springwater.easybot.bridge.message.TextSegment;
 import com.springwater.easybot.bridge.model.PlayerInfo;
 import com.springwater.easybot.bridge.model.ServerInfo;
+import com.springwater.easybot.bridge.packet.NbtDataTypeEnum;
 import com.springwater.easybot.config.ConfigLoader;
+import com.springwater.easybot.nbt.PlayerDataProvider;
 import com.springwater.easybot.placeholder.PlaceholderManager;
 import com.springwater.easybot.platforms.EasyBotModImpl;
 import com.springwater.easybot.platforms.ModData;
+import com.springwater.easybot.statistic.StatisticManager;
 import com.springwater.easybot.threading.EasyBotNetworkingThreadPool;
 //? fabric {
 import com.springwater.easybot.platforms.fabric.utils.FabricLoaderUtils;
@@ -17,12 +22,18 @@ import com.springwater.easybot.utils.PlayerInfoUtils;
 import com.springwater.easybot.utils.PlayerUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.storage.LevelResource;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class BridgeBehaviorImpl implements BridgeBehavior {
@@ -68,7 +79,7 @@ public class BridgeBehaviorImpl implements BridgeBehavior {
         //?}
         //? neoforge {
         /*info.setServerName("NeoForge");
-        *///?}
+         *///?}
         //? legacyforge {
         /*info.setServerName("Forge");
          *///?}
@@ -104,9 +115,9 @@ public class BridgeBehaviorImpl implements BridgeBehavior {
             if (bindPlayer != null) {
                 //? >= 1.21.11 {
                 bindPlayer.playSound(SoundEvents.PLAYER_LEVELUP, 1.0F, 1.0F);
-                //?} else {
-                /*bindPlayer.playNotifySound(SoundEvents.PLAYER_LEVELUP,SoundSource.MASTER,1.0f,1.0f);
-                 *///?}
+                 //?} else {
+                /*bindPlayer.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.MASTER, 1.0f, 1.0f);
+                *///?}
 
                 // 通知绑定成功的喜报!!
                 bindPlayer.sendSystemMessage(
@@ -194,6 +205,22 @@ public class BridgeBehaviorImpl implements BridgeBehavior {
     @Override
     public boolean isAuthenticated(String name) {
         return EasyBotModImpl.INSTANCE.isAuthenticated(name);
+    }
+
+    @Override
+    public @Nullable JsonObject ReadNbtData(String playerUuid, NbtDataTypeEnum nbtDataTypeEnum) {
+        UUID uuid = UUID.fromString(playerUuid); // safe! 解析uuid还可以防止路径穿越漏洞,这你扯不扯~
+        switch (nbtDataTypeEnum) {
+            case PlayerData:
+                return PlayerDataProvider.getPlayerData(uuid);
+            case Advancements:
+                // TODO::以后再说啦~
+                break;
+            case Statistics:
+                return PlayerDataProvider.getPlayerStats(uuid);
+        }
+
+        throw new IllegalArgumentException("服务器不知道你提供的数据类型: " + nbtDataTypeEnum + " 是何意味,这可能是你的Mod版本太低导致的!!");
     }
 
     @Override

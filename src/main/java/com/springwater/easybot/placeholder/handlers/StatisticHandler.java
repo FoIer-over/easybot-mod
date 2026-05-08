@@ -22,7 +22,7 @@ public class StatisticHandler implements IPlaceholderHandler {
     private static final Gson GSON = new Gson();
 
     //?}
-    private static String realTimeStatToJson(ServerPlayer player) {
+    public static String realTimeStatToJson(ServerPlayer player) {
         //? >= 1.21.11 {
         return GSON.toJson(((ServerStatsCounterAccessor)(player.getStats())).easybot$toJson());
         //?} else {
