@@ -29,7 +29,10 @@ public class PlayerDataProvider {
 
         if (serverPlayer != null) {
             //? >= 1.21.6 {
-            var output = net.minecraft.world.level.storage.TagValueOutput.createWithoutContext(new net.minecraft.util.ProblemReporter.ScopedCollector(EasyBotModImpl.INSTANCE.getLogger()));
+            var output = net.minecraft.world.level.storage.TagValueOutput.createWithContext(
+                    new net.minecraft.util.ProblemReporter.ScopedCollector(EasyBotModImpl.INSTANCE.getLogger()),
+                    server.registryAccess()
+            );
             serverPlayer.saveWithoutId(output);
             jsonElement = NbtOps.INSTANCE.convertTo(
                     JsonOps.INSTANCE,
