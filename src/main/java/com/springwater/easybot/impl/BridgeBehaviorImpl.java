@@ -6,6 +6,7 @@ import com.springwater.easybot.bridge.ClientProfile;
 import com.springwater.easybot.bridge.message.Segment;
 import com.springwater.easybot.bridge.message.TextSegment;
 import com.springwater.easybot.bridge.model.PlayerInfo;
+import com.springwater.easybot.bridge.model.PlayerSkin;
 import com.springwater.easybot.bridge.model.ServerInfo;
 import com.springwater.easybot.bridge.packet.NbtDataTypeEnum;
 import com.springwater.easybot.config.ConfigLoader;
@@ -20,6 +21,7 @@ import com.springwater.easybot.platforms.fabric.utils.FabricLoaderUtils;
 //?}
 import com.springwater.easybot.utils.PlayerInfoUtils;
 import com.springwater.easybot.utils.PlayerUtils;
+import com.springwater.easybot.utils.SkinUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
@@ -115,9 +117,9 @@ public class BridgeBehaviorImpl implements BridgeBehavior {
             if (bindPlayer != null) {
                 //? >= 1.21.11 {
                 bindPlayer.playSound(SoundEvents.PLAYER_LEVELUP, 1.0F, 1.0F);
-                 //?} else {
+                //?} else {
                 /*bindPlayer.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.MASTER, 1.0f, 1.0f);
-                *///?}
+                 *///?}
 
                 // 通知绑定成功的喜报!!
                 bindPlayer.sendSystemMessage(
@@ -226,5 +228,12 @@ public class BridgeBehaviorImpl implements BridgeBehavior {
     @Override
     public List<PlayerInfo> getPlayerList() {
         return PlayerInfoUtils.buildPlayerInfoList(EasyBotModImpl.INSTANCE.getServer().getPlayerList().getPlayers());
+    }
+
+    @Override
+    public @Nullable PlayerSkin getPlayerSkin(String playerName) {
+        ServerPlayer player = EasyBotModImpl.INSTANCE.getServer().getPlayerList().getPlayerByName(playerName);
+        if (player == null) return null;
+        return SkinUtils.getSkin(player);
     }
 }
