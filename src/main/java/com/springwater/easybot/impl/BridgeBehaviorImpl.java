@@ -22,8 +22,10 @@ import com.springwater.easybot.platforms.fabric.utils.FabricLoaderUtils;
 import com.springwater.easybot.utils.PlayerInfoUtils;
 import com.springwater.easybot.utils.PlayerUtils;
 import com.springwater.easybot.utils.SkinUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -235,5 +237,37 @@ public class BridgeBehaviorImpl implements BridgeBehavior {
         ServerPlayer player = EasyBotModImpl.INSTANCE.getServer().getPlayerList().getPlayerByName(playerName);
         if (player == null) return null;
         return SkinUtils.getSkin(player);
+    }
+
+    /**
+     * 当收到跨平台绑定通知时调用（EasyBot 服务端主动推送）
+     * 查找对应在线玩家并发送提示消息，附带可点击的快速确认按钮
+     *
+     * @param playerName     玩家名称
+     * @param code           绑定确认码
+     * @param targetPlatform 目标平台
+     * @param originPlatform 原平台
+     */
+    @Override
+    public void onCrossBindNotify(String playerName, String code, String targetPlatform, String originPlatform) {
+        EasyBotModImpl.INSTANCE.getServer().execute(() -> {
+            ServerPlayer onlinePlayer = EasyBotModImpl.INSTANCE.getServer().getPlayerList().getPlayerByName(playerName);
+            if (onlinePlayer != null) {
+                onlinePlayer.sendSystemMessage(
+                        Component.literal(
+                                "你的账号正在尝试绑定 " + targetPlatform + " 平台（原平台：" + originPlatform + "），\n" +
+                                        "请在聊天框输入 /easybot confirm " + code + " 确认"
+                        )
+                );
+
+                Style confirmStyle = Style.EMPTY;
+                confirmStyle = ComponentAdapterImpl.withRunCommand(confirmStyle, "/easybot confirm " + code);
+                confirmStyle = ComponentAdapterImpl.withHoverText(confirmStyle, Component.literal("点击确认跨平台绑定"));
+                confirmStyle = confirmStyle.withColor(ChatFormatting.GREEN);
+                onlinePlayer.sendSystemMessage(
+                        Component.literal("[点我快速确认]").withStyle(confirmStyle)
+                );
+            }
+        });
     }
 }

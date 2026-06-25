@@ -29,4 +29,16 @@ public class ComponentAdapterImpl {
         *///?}
     }
 
+    public static Style withRunCommand(Style style, String command) {
+        //? if >=1.21.6 {
+        return style.withClickEvent(
+                new ClickEvent.RunCommand(command)
+        );
+        //?} else {
+        /*return style.withClickEvent(
+            new ClickEvent(ClickEvent.Action.RUN_COMMAND, command)
+        );
+        *///?}
+    }
+
 }
