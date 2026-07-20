@@ -84,7 +84,8 @@ public class ReloadCommandHandler implements ICommandHandler {
                 if (success) {
                     player.sendSystemMessage(
                             Component.literal("配置已重载 ").withStyle(ChatFormatting.GREEN)
-                                    .append(Component.literal("[自动热重载已生效]").withStyle(ChatFormatting.GRAY))
+                                    .append(Component.literal("[自动热重载已生效]").withStyle(ChatFormatting.GRAY)),
+                            false
                     );
                     //? >= 1.21.11 {
                     player.playSound(SoundEvents.PLAYER_LEVELUP, 1.0F, 1.0F);
@@ -94,7 +95,8 @@ public class ReloadCommandHandler implements ICommandHandler {
                 } else {
                     player.sendSystemMessage(
                             Component.literal("重载失败: ").withStyle(ChatFormatting.RED)
-                                    .append(Component.literal(errorMessage).withStyle(ChatFormatting.YELLOW))
+                                    .append(Component.literal(errorMessage).withStyle(ChatFormatting.YELLOW)),
+                            false
                     );
                     //? >= 1.21.11 {
                     player.playSound(SoundEvents.VILLAGER_NO, 1.0F, 1.0F);

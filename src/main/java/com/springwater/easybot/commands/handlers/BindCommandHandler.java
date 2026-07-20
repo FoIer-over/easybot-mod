@@ -149,9 +149,9 @@ public class BindCommandHandler implements ICommandHandler {
                                             EasyBotModImpl.INSTANCE.getServer().execute(() -> {
                                                 ServerPlayer p = EasyBotModImpl.INSTANCE.getServer().getPlayerList().getPlayerByName(playerName);
                                                 if (p != null) {
-                                                    p.sendSystemMessage(Component.literal(packet.getMessage()));
+                                                    p.sendSystemMessage(Component.literal(packet.getMessage()), false);
                                                     if (packet.isSuccess() && packet.getBoundPlatforms() != null && !packet.getBoundPlatforms().isEmpty()) {
-                                                        p.sendSystemMessage(Component.literal("已绑定平台: " + packet.getBoundPlatforms()).withStyle(ChatFormatting.GREEN));
+                                                        p.sendSystemMessage(Component.literal("已绑定平台: " + packet.getBoundPlatforms()).withStyle(ChatFormatting.GREEN), false);
                                                     }
                                                 }
                                             });
@@ -161,10 +161,10 @@ public class BindCommandHandler implements ICommandHandler {
                                                 ServerPlayer p = EasyBotModImpl.INSTANCE.getServer().getPlayerList().getPlayerByName(playerName);
                                                 if (p != null) {
                                                     if (cause instanceof TimeoutException) {
-                                                        p.sendSystemMessage(Component.literal("操作超时，请稍后再试").withStyle(ChatFormatting.RED));
+                                                        p.sendSystemMessage(Component.literal("操作超时，请稍后再试").withStyle(ChatFormatting.RED), false);
                                                     } else {
                                                         ModData.LOGGER.error("确认绑定失败", ex);
-                                                        p.sendSystemMessage(Component.literal("操作失败，请稍后再试").withStyle(ChatFormatting.RED));
+                                                        p.sendSystemMessage(Component.literal("操作失败，请稍后再试").withStyle(ChatFormatting.RED), false);
                                                     }
                                                 }
                                             });
@@ -194,14 +194,15 @@ public class BindCommandHandler implements ICommandHandler {
                                         ServerPlayer p = EasyBotModImpl.INSTANCE.getServer().getPlayerList().getPlayerByName(playerName);
                                         if (p != null) {
                                             if (!packet.isBound() || packet.getSocialAccounts() == null || packet.getSocialAccounts().isEmpty()) {
-                                                p.sendSystemMessage(Component.literal("你尚未绑定任何社交平台"));
+                                                p.sendSystemMessage(Component.literal("你尚未绑定任何社交平台"), false);
                                                 return;
                                             }
-                                            p.sendSystemMessage(Component.literal("已绑定的社交平台:").withStyle(ChatFormatting.GREEN));
+                                            p.sendSystemMessage(Component.literal("已绑定的社交平台:").withStyle(ChatFormatting.GREEN), false);
                                             for (BindStatusAccount account : packet.getSocialAccounts()) {
                                                 p.sendSystemMessage(
                                                         Component.literal("  " + account.getPlatform() + " - " + account.getName() + " (" + account.getUuid() + ")")
-                                                                .withStyle(ChatFormatting.GOLD)
+                                                                .withStyle(ChatFormatting.GOLD),
+                                                        false
                                                 );
                                             }
                                         }
@@ -212,10 +213,10 @@ public class BindCommandHandler implements ICommandHandler {
                                         ServerPlayer p = EasyBotModImpl.INSTANCE.getServer().getPlayerList().getPlayerByName(playerName);
                                         if (p != null) {
                                             if (cause instanceof TimeoutException) {
-                                                p.sendSystemMessage(Component.literal("操作超时，请稍后再试").withStyle(ChatFormatting.RED));
+                                                p.sendSystemMessage(Component.literal("操作超时，请稍后再试").withStyle(ChatFormatting.RED), false);
                                             } else {
                                                 ModData.LOGGER.error("查询绑定状态失败", ex);
-                                                p.sendSystemMessage(Component.literal("操作失败，请稍后再试").withStyle(ChatFormatting.RED));
+                                                p.sendSystemMessage(Component.literal("操作失败，请稍后再试").withStyle(ChatFormatting.RED), false);
                                             }
                                         }
                                     });
@@ -239,23 +240,25 @@ public class BindCommandHandler implements ICommandHandler {
                 ServerPlayer player = EasyBotModImpl.INSTANCE.getServer().getPlayerList().getPlayer(uuid);
                 if (player == null) return;
 
-                player.sendSystemMessage(Component.literal("[EasyBot] 你已绑定以下社交平台："));
+                player.sendSystemMessage(Component.literal("[EasyBot] 你已绑定以下社交平台："), false);
                 if (packet.isBound() && packet.getSocialAccounts() != null) {
                     for (BindStatusAccount account : packet.getSocialAccounts()) {
                         player.sendSystemMessage(
                                 Component.literal("  " + account.getPlatform() + " - " + account.getName() + " (" + account.getUuid() + ")")
-                                        .withStyle(ChatFormatting.RED)
+                                        .withStyle(ChatFormatting.RED),
+                                false
                         );
                     }
                 }
-                player.sendSystemMessage(Component.literal("[EasyBot] 验证码只能用于绑定新平台，无法重复绑定已有平台"));
+                player.sendSystemMessage(Component.literal("[EasyBot] 验证码只能用于绑定新平台，无法重复绑定已有平台"), false);
 
                 Style confirmStyle = Style.EMPTY;
                 confirmStyle = ComponentAdapterImpl.withRunCommand(confirmStyle, "/easybot bind confirm");
                 confirmStyle = ComponentAdapterImpl.withHoverText(confirmStyle, Component.literal("点击后将继续生成绑定验证码"));
                 confirmStyle = confirmStyle.withColor(ChatFormatting.GREEN);
                 player.sendSystemMessage(
-                        Component.literal("[点我确认]").withStyle(confirmStyle)
+                        Component.literal("[点我确认]").withStyle(confirmStyle),
+                        false
                 );
             });
         } catch (Exception ex) {
@@ -283,7 +286,7 @@ public class BindCommandHandler implements ICommandHandler {
         EasyBotModImpl.INSTANCE.getServer().execute(() -> {
             ServerPlayer player = EasyBotModImpl.INSTANCE.getServer().getPlayerList().getPlayer(uuid);
             if (player != null) {
-                player.sendSystemMessage(component);
+                player.sendSystemMessage(component, false);
             }
         });
     }

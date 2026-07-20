@@ -131,7 +131,8 @@ public class BridgeBehaviorImpl implements BridgeBehavior {
                                         .replace("#player", playerName)
                                         .replace("#account", accountId)
                                         .replace("#name", accountName)
-                        )
+                        ),
+                        false
                 );
             } else if (isDebug) {
                 ModData.LOGGER.warn("玩家{}绑定账号{}({})成功,但玩家不在线 (跳过通知)", playerName, accountId, accountName);
@@ -257,7 +258,8 @@ public class BridgeBehaviorImpl implements BridgeBehavior {
                         Component.literal(
                                 "你的账号正在尝试绑定 " + targetPlatform + " 平台（原平台：" + originPlatform + "），\n" +
                                         "请在聊天框输入 /easybot confirm " + code + " 确认"
-                        )
+                        ),
+                        false
                 );
 
                 Style confirmStyle = Style.EMPTY;
@@ -265,7 +267,8 @@ public class BridgeBehaviorImpl implements BridgeBehavior {
                 confirmStyle = ComponentAdapterImpl.withHoverText(confirmStyle, Component.literal("点击确认跨平台绑定"));
                 confirmStyle = confirmStyle.withColor(ChatFormatting.GREEN);
                 onlinePlayer.sendSystemMessage(
-                        Component.literal("[点我快速确认]").withStyle(confirmStyle)
+                        Component.literal("[点我快速确认]").withStyle(confirmStyle),
+                        false
                 );
             }
         });
