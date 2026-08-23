@@ -1,11 +1,13 @@
 package com.springwater.easybot.utils;
 import com.springwater.easybot.bridge.packet.PlayerInfoWithRaw;
+import com.springwater.easybot.config.ConfigLoader;
 import com.springwater.easybot.platforms.EasyBotModImpl;
 import com.springwater.easybot.platforms.ModData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 public class PlayerUtils {
     /**
@@ -39,8 +41,7 @@ public class PlayerUtils {
         playerInfo.setName(player.getName().getString());
         playerInfo.setNameRaw(player.getName().getString());
         playerInfo.setUuid(player.getUUID().toString());
-        var remoteAddress = (InetSocketAddress)player.connection.getRemoteAddress();
-        playerInfo.setIp(remoteAddress.getAddress().getHostAddress());
+        playerInfo.setIp(getPlayerIp(player));
 
         if (FloodgateUtils.isFloodgatePlayer(player.getUUID())) {
             var floodgateInfo = FloodgateUtils.getFloodgatePlayerInfo(player.getUUID());
@@ -54,5 +55,32 @@ public class PlayerUtils {
         }
 
         return playerInfo;
+    }
+
+    public static String getPlayerIp(ServerPlayer player) {
+        var ip = getRemoteIp(getRemoteAddress(player));
+        if (ip.isEmpty()) {
+            if (ConfigLoader.get().isDebug()) {
+                ModData.LOGGER.info("玩家{}没有真实网络地址, 已使用空IP", player.getName().getString());
+            }
+            return "未知";
+        }
+        return ip;
+    }
+
+    public static boolean hasRemoteAddress(ServerPlayer player) {
+        return getRemoteAddress(player) != null;
+    }
+
+    public static String getRemoteIp(SocketAddress remoteAddress) {
+        if (remoteAddress instanceof InetSocketAddress inetSocketAddress && inetSocketAddress.getAddress() != null) {
+            return inetSocketAddress.getAddress().getHostAddress();
+        }
+        return "";
+    }
+
+    private static SocketAddress getRemoteAddress(ServerPlayer player) {
+        if (player.connection == null) return null;
+        return player.connection.getRemoteAddress();
     }
 }

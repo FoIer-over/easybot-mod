@@ -10,8 +10,8 @@ import com.springwater.easybot.platforms.ModData;
 import com.springwater.easybot.statistic.StatisticManager;
 import com.springwater.easybot.utils.FloodgateUtils;
 import com.springwater.easybot.utils.GameProfileUtils;
+import com.springwater.easybot.utils.PlayerUtils;
 import net.minecraft.network.chat.Component;
-import java.net.InetSocketAddress;
 import java.util.UUID;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 public class PlayerLoginFeature implements IEasyBotFeatures {
@@ -35,8 +35,8 @@ public class PlayerLoginFeature implements IEasyBotFeatures {
                 handleError(handler, "当前服务器未连接到主程序");
                 return;
             }
-            var remoteAddress = (InetSocketAddress) ((ServerLoginNetworkHandlerAccessor) handler).GetConnection().getRemoteAddress();
-            EasyBotModImpl.INSTANCE.getBridgeClient().reportPlayer(name, uuid.toString(), remoteAddress.getAddress().getHostAddress());
+            var remoteIp = PlayerUtils.getRemoteIp(((ServerLoginNetworkHandlerAccessor) handler).GetConnection().getRemoteAddress());
+            EasyBotModImpl.INSTANCE.getBridgeClient().reportPlayer(name, uuid.toString(), remoteIp);
             try {
                 var resp = EasyBotModImpl.INSTANCE.getBridgeClient().login(name, uuid.toString());
                 if (resp.getKick()) {
