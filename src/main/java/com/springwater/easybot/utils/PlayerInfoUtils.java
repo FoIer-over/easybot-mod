@@ -11,7 +11,7 @@ public class PlayerInfoUtils {
             PlayerInfo playerInfo = new PlayerInfo();
             playerInfo.setPlayerName(player.getName().getString());
             playerInfo.setPlayerUuid(player.getUUID().toString());
-            playerInfo.setIp(player.connection.getRemoteAddress().toString());
+            playerInfo.setIp(PlayerUtils.getPlayerIp(player));
             playerInfo.setSkinUrl(SkinUtils.getSkinUrl(player));
             playerInfo.setBedrock(
                     FloodgateUtils.isFloodgatePlayer(player.getUUID())

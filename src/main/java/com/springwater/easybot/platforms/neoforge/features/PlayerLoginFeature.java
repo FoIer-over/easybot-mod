@@ -9,12 +9,12 @@ import com.springwater.easybot.platforms.ModData;
 import com.springwater.easybot.statistic.StatisticManager;
 import com.springwater.easybot.utils.FloodgateUtils;
 import com.springwater.easybot.utils.GameProfileUtils;
+import com.springwater.easybot.utils.PlayerUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.neoforged.bus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -76,8 +76,7 @@ public class PlayerLoginFeature implements IEasyBotFeatures {
                 return;
             }
 
-            var remoteAddress = (InetSocketAddress) listener.getConnection().getRemoteAddress();
-            String hostName = remoteAddress.getAddress().getHostAddress();
+            String hostName = PlayerUtils.getRemoteIp(listener.getConnection().getRemoteAddress());
 
             EasyBotModImpl.INSTANCE.getBridgeClient().reportPlayer(name, uuid.toString(), hostName);
 
@@ -149,8 +148,7 @@ public class PlayerLoginFeature implements IEasyBotFeatures {
                 return;
             }
 
-            var remoteAddress = (InetSocketAddress) listener.getConnection().getRemoteAddress();
-            String hostName = remoteAddress.getAddress().getHostAddress();
+            String hostName = PlayerUtils.getRemoteIp(listener.getConnection().getRemoteAddress());
 
             EasyBotModImpl.INSTANCE.getBridgeClient().reportPlayer(name, uuid.toString(), hostName);
 

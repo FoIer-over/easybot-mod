@@ -21,7 +21,7 @@ public class MessageSyncFeature {
         }
         if (CarpetUtils.isFakePlayer(sender)) {
             if (ConfigLoader.get().isDebug()) {
-                ModData.LOGGER.info("已过滤地毯假人 {}", sender.getName().getString());
+                ModData.LOGGER.info("已过滤假人或非真实连接玩家 {}", sender.getName().getString());
             }
             return;
         }

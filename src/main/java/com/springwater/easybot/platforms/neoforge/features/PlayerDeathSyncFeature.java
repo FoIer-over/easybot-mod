@@ -31,7 +31,7 @@ public class PlayerDeathSyncFeature implements IEasyBotFeatures {
         if (entity instanceof ServerPlayer player) {
             if (CarpetUtils.isFakePlayer((ServerPlayer)entity)) {
                 if (ConfigLoader.get().isDebug()) {
-                    ModData.LOGGER.info("已过滤地毯假人 {}", entity.getName().getString());
+                    ModData.LOGGER.info("已过滤假人或非真实连接玩家 {}", entity.getName().getString());
                 }
                 return;
             }
