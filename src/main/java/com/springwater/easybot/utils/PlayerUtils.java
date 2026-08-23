@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Objects;
 
 public class PlayerUtils {
     /**
@@ -59,11 +60,11 @@ public class PlayerUtils {
 
     public static String getPlayerIp(ServerPlayer player) {
         var ip = getRemoteIp(getRemoteAddress(player));
-        if (ip.isEmpty()) {
+        if (Objects.equals(ip, "127.0.0.1") && ConfigLoader.get().isDebug()) {
             if (ConfigLoader.get().isDebug()) {
-                ModData.LOGGER.info("玩家{}没有真实网络地址, 已使用空IP", player.getName().getString());
+                ModData.LOGGER.info("玩家{}没有真实网络地址, 已使用回环IP", player.getName().getString());
             }
-            return "未知";
+            return "127.0.0.1";
         }
         return ip;
     }
@@ -76,7 +77,7 @@ public class PlayerUtils {
         if (remoteAddress instanceof InetSocketAddress inetSocketAddress && inetSocketAddress.getAddress() != null) {
             return inetSocketAddress.getAddress().getHostAddress();
         }
-        return "";
+        return "127.0.0.1";
     }
 
     private static SocketAddress getRemoteAddress(ServerPlayer player) {
